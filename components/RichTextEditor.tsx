@@ -103,6 +103,27 @@ export default function RichTextEditor({
   const handlePrint = useReactToPrint({
     contentRef: printAreaRef,
     documentTitle: documentTitle || "Document",
+    pageStyle: `
+      @page {
+        size: 8.27in 11.69in;
+        margin: 0;
+      }
+
+      @media print {
+        body {
+          background: #ffffff !important;
+        }
+
+        .print-page {
+          box-shadow: none !important;
+          background: #ffffff !important;
+          margin: 0 auto !important;
+          width: 8.27in !important;
+          min-height: 11.69in !important;
+          padding: 1.75rem 2.25rem !important;
+        }
+      }
+    `,
   });
 
   const handleDownload = useCallback(async () => {
