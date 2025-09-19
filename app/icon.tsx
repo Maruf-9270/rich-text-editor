@@ -1,3 +1,4 @@
+
 import { ImageResponse } from 'next/server';
 
 export const size = {
@@ -8,6 +9,7 @@ export const size = {
 export const contentType = 'image/png';
 
 export default function Icon() {
+
   const backgroundColor = '#0F172A';
   const textColor = '#F8FAFC';
 
@@ -16,6 +18,18 @@ export default function Icon() {
       <div
         style={{
           alignItems: 'center',
+
+          background: '#1d4ed8',
+          color: '#fff',
+          display: 'flex',
+          fontSize: 18,
+          fontWeight: 700,
+          height: '100%',
+          justifyContent: 'center',
+          width: '100%',
+        }}
+      >
+        RT
           background: backgroundColor,
           borderRadius: '12px',
           color: textColor,
