@@ -114,11 +114,13 @@ export default function RichTextEditor({
 
     await html2pdf()
       .set({
-        margin: 0.5,
+
+        margin: 0,
         filename: `${documentTitle || "document"}.pdf`,
         image: { type: "jpeg", quality: 0.98 },
         html2canvas: { scale: 2, useCORS: true },
-        jsPDF: { unit: "in", format: "letter", orientation: "portrait" },
+        jsPDF: { unit: "in", format: [8.27, 11.69], orientation: "portrait" },
+
         pagebreak: { mode: ["css", "legacy"] },
       })
       .from(printAreaRef.current)

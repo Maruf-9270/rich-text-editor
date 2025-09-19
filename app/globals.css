@@ -41,9 +41,15 @@ a {
 
   .print-page {
     box-shadow: none !important;
+    background: #ffffff !important;
     margin: 0 auto;
-    width: 100% !important;
-    min-height: auto !important;
-    padding: 1in !important;
+    width: 8.27in !important;
+    min-height: 11.69in !important;
+    padding: 1.75rem 2.25rem !important;
   }
+}
+
+@page {
+  size: 8.27in 11.69in;
+  margin: 0;
 }

@@ -1,10 +1,9 @@
 
-import { ImageResponse } from 'next/server';
+import { ImageResponse } from 'next/og';
 
 export const size = {
-  width: 48,
-  height: 48,
-};
+  width: 32,
+  height: 32,}
 
 export const contentType = 'image/png';
 
@@ -18,7 +17,6 @@ export default function Icon() {
       <div
         style={{
           alignItems: 'center',
-
           background: '#1d4ed8',
           color: '#fff',
           display: 'flex',
@@ -45,6 +43,7 @@ export default function Icon() {
         }}
       >
         RTE
+
       </div>
     ),
     {
