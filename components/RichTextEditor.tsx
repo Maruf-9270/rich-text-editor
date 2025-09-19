@@ -124,35 +124,70 @@ export default function RichTextEditor({
     ]);
 
     const element = printAreaRef.current;
+    const pxPerInch = 96;
+    const a4WidthPx = 8.27 * pxPerInch;
+    const a4HeightPx = 11.69 * pxPerInch;
+    const scale = typeof window === "undefined" ? 2 : window.devicePixelRatio || 2;
+
     const canvas = await html2canvas(element, {
-      scale: 2,
       backgroundColor: "#ffffff",
       useCORS: true,
+      scale,
       windowWidth: element.scrollWidth,
       windowHeight: element.scrollHeight,
     });
 
-    const imageData = canvas.toDataURL("image/png");
     const pdf = new jsPDF({
       orientation: "portrait",
-      unit: "pt",
-      format: "a4",
+      unit: "px",
+      format: [a4WidthPx, a4HeightPx],
     });
 
     const pageWidth = pdf.internal.pageSize.getWidth();
-    const pageHeight = pdf.internal.pageSize.getHeight();
-    const imgHeight = (canvas.height * pageWidth) / canvas.width;
-    let heightLeft = imgHeight;
-    let position = 0;
+    const elementWidth = element.getBoundingClientRect().width || element.clientWidth;
+    const canvasScale = canvas.width / Math.max(elementWidth, 1);
+    const pageCanvasHeight = a4HeightPx * canvasScale;
+    const pageCanvas = document.createElement("canvas");
+    const pageContext = pageCanvas.getContext("2d");
 
-    pdf.addImage(imageData, "PNG", 0, position, pageWidth, imgHeight);
-    heightLeft -= pageHeight;
+    if (!pageContext) {
+      console.warn("Unable to get 2D context for PDF pagination");
+      return;
+    }
 
-    while (heightLeft > 0) {
-      position = heightLeft - imgHeight;
-      pdf.addPage();
-      pdf.addImage(imageData, "PNG", 0, position, pageWidth, imgHeight);
-      heightLeft -= pageHeight;
+    pageCanvas.width = canvas.width;
+    let renderedHeight = 0;
+    let pageIndex = 0;
+
+    while (renderedHeight < canvas.height) {
+      const remainingHeight = canvas.height - renderedHeight;
+      const sliceHeight = Math.min(pageCanvasHeight, remainingHeight);
+      pageCanvas.height = sliceHeight;
+      pageContext.clearRect(0, 0, pageCanvas.width, pageCanvas.height);
+      pageContext.drawImage(
+        canvas,
+        0,
+        renderedHeight,
+        pageCanvas.width,
+        sliceHeight,
+        0,
+        0,
+        pageCanvas.width,
+        sliceHeight,
+      );
+
+      const pageData = pageCanvas.toDataURL("image/png");
+      const pageImageHeight = (sliceHeight * pageWidth) / pageCanvas.width;
+
+      if (pageIndex === 0) {
+        pdf.addImage(pageData, "PNG", 0, 0, pageWidth, pageImageHeight);
+      } else {
+        pdf.addPage();
+        pdf.addImage(pageData, "PNG", 0, 0, pageWidth, pageImageHeight);
+      }
+
+      renderedHeight += sliceHeight;
+      pageIndex += 1;
     }
 
     pdf.save(`${documentTitle || "document"}.pdf`);
