@@ -8,7 +8,7 @@ content, and exports pixel-perfect PDFs that mirror the on-screen layout when pr
 - 🎯 **True WYSIWYG layout** – page-sized canvas (A4) with print styles that keep alignment identical on screen and on paper.
 - 🛠️ **Productivity toolbar** – headings, lists, alignment, block quotes, colours, undo/redo, and formatting reset.
 - 📝 **Default template loader** – instantly preload an example brief and reset the document title.
-- 🖨️ **Print and PDF** – use the browser print dialog via `react-to-print` or generate a PDF directly with `html2pdf.js`.
+- 🖨️ **Print and PDF** – use the browser print dialog via `react-to-print` or generate a PDF directly with `html2canvas` + `jsPDF`.
 
 ## Getting started
 
@@ -37,15 +37,14 @@ The build command pre-renders the editor and verifies the TypeScript/ESLint conf
 
 - Use **Print / Save as PDF** to open the browser print dialog and choose “Save as PDF” for a native export that keeps the exact
   layout.
-- Use **Download PDF** for a one-click PDF that mirrors the preview by rendering the page via `html2pdf.js`.
+- Use **Download PDF** for a one-click PDF that mirrors the preview by rasterising the page with `html2canvas` and embedding it into an A4 `jsPDF` document.
 - Toolbar options such as alignment and colours apply to the selected text and are preserved in both export flows.
 
 ## Tech stack
 
 - [Next.js 14.2 App Router](https://nextjs.org/docs/app) with TypeScript
 - [Tiptap](https://tiptap.dev/) rich text editor
-- [react-to-print](https://github.com/gregnb/react-to-print) and [html2pdf.js](https://ekoopmans.github.io/html2pdf.js/) for
-  export workflows
+- [react-to-print](https://github.com/gregnb/react-to-print), [html2canvas](https://html2canvas.hertzen.com/), and [jsPDF](https://github.com/parallax/jsPDF) for export workflows
 
 ## License
 

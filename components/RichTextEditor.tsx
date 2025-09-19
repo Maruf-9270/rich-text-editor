@@ -110,19 +110,52 @@ export default function RichTextEditor({
       return;
     }
 
-    const { default: html2pdf } = await import("html2pdf.js");
+    if (typeof document !== "undefined" && "fonts" in document) {
+      try {
+        await (document as Document & { fonts: FontFaceSet }).fonts.ready;
+      } catch (error) {
+        console.warn("Unable to ensure fonts loaded before PDF export", error);
+      }
+    }
 
-    await html2pdf()
-      .set({
-        margin: 0,
-        filename: `${documentTitle || "document"}.pdf`,
-        image: { type: "jpeg", quality: 0.98 },
-        html2canvas: { scale: 2, useCORS: true },
-        jsPDF: { unit: "in", format: [8.27, 11.69], orientation: "portrait" },
-        pagebreak: { mode: ["css", "legacy"] },
-      })
-      .from(printAreaRef.current)
-      .save();
+    const [{ default: html2canvas }, { jsPDF }] = await Promise.all([
+      import("html2canvas"),
+      import("jspdf"),
+    ]);
+
+    const element = printAreaRef.current;
+    const canvas = await html2canvas(element, {
+      scale: 2,
+      backgroundColor: "#ffffff",
+      useCORS: true,
+      windowWidth: element.scrollWidth,
+      windowHeight: element.scrollHeight,
+    });
+
+    const imageData = canvas.toDataURL("image/png");
+    const pdf = new jsPDF({
+      orientation: "portrait",
+      unit: "pt",
+      format: "a4",
+    });
+
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const pageHeight = pdf.internal.pageSize.getHeight();
+    const imgHeight = (canvas.height * pageWidth) / canvas.width;
+    let heightLeft = imgHeight;
+    let position = 0;
+
+    pdf.addImage(imageData, "PNG", 0, position, pageWidth, imgHeight);
+    heightLeft -= pageHeight;
+
+    while (heightLeft > 0) {
+      position = heightLeft - imgHeight;
+      pdf.addPage();
+      pdf.addImage(imageData, "PNG", 0, position, pageWidth, imgHeight);
+      heightLeft -= pageHeight;
+    }
+
+    pdf.save(`${documentTitle || "document"}.pdf`);
   }, [documentTitle]);
 
   const setAlignment = useCallback(
