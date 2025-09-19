@@ -1,0 +1,55 @@
+:root {
+  color-scheme: light;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+body {
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: #f3f4f6;
+  color: #111827;
+  min-height: 100vh;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.print-page {
+  background: #ffffff;
+}
+
+@media print {
+  body {
+    background: #ffffff !important;
+  }
+
+  [data-no-print="true"] {
+    display: none !important;
+  }
+
+  .print-page {
+    box-shadow: none !important;
+    background: #ffffff !important;
+    margin: 0 auto;
+    width: 8.27in !important;
+    min-height: 11.69in !important;
+    padding: 1.75rem 2.25rem !important;
+  }
+}
+
+@page {
+  size: 8.27in 11.69in;
+  margin: 0;
+}
